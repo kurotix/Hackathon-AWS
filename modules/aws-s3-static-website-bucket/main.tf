@@ -1,5 +1,5 @@
-resource "aws_s3_bucket" "s3_bucket" {
-    bucket = var.bucket_name
+/*resource "aws_s3_bucket" "s3_bucket" {
+    bucket = "group7-terraform-hackathon" #var.bucket_name
     acl    = "public-read"
     policy = <<EOF
 {
@@ -24,7 +24,7 @@ EOF
         index_document = "index.html"
         error_document = "error.html"
     }*/
-}
+
 /*
 resource "aws_s3_bucket_object" "object" {
 
@@ -49,4 +49,5 @@ resource "aws_s3_bucket_object" "object" {
   etag = filemd5("hello.js")
 
 }
+*/
 */

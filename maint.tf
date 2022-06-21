@@ -77,10 +77,10 @@ output "endpoint" {
 }
 */
 resource "aws_eks_node_group" "group7" {
-  cluster_name    = aws_eks_cluster.group7
+  cluster_name    = aws_eks_cluster.group7.name
   node_group_name = "Group7"
   node_role_arn   = aws_iam_role.group7.arn
-  subnet_ids      = aws_subnet.public-subnet-in-us-east-2.id
+  subnet_ids      = toset([element(aws_subnet.public-subnet-in-us-east-2.*.id,0)]) #toset(aws_subnet.public-subnet-in-us-east-2.id)
 
   scaling_config {
     desired_size = 3
@@ -115,7 +115,7 @@ resource "aws_eks_node_group" "group7" {
   })
 }*/
 
-resource "aws_iam_role_policy_attachment" "group7-AmazonEKSWorkerNodePolicy" {
+  resource "aws_iam_role_policy_attachment" "group7-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.group7.name
 }
@@ -125,10 +125,11 @@ resource "aws_iam_role_policy_attachment" "group7-AmazonEKS_CNI_Policy" {
   role       = aws_iam_role.group7.name
 }
 
-resource "aws_iam_role_policy_attachment" "group7-AmazonEC2ContainerRegistryReadOnly" {
+  resource "aws_iam_role_policy_attachment" "group7-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.group7.name
 }
+
 
 resource "aws_iam_role" "group7" {
   name = "eks-cluster-group7"
@@ -138,28 +139,38 @@ resource "aws_iam_role" "group7" {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "Hackathon AWS",
       "Effect": "Allow",
+      "Action": [
+                "iam:GetUserPolicy",
+                "iam:ListGroupsForUser",
+                "iam:ListAttachedUserPolicies",
+                "iam:ListUserPolicies",
+                "iam:GetUser"
+            ],
       "Principal": {
         "Service": "eks.amazonaws.com"
       },
-      "Action": "sts:AssumeRole"
+      "Action": "sts:AllowAll",
+      "Ressource": "*"
     }
   ]
 }
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "example-AmazonEKSClusterPolicy" {
+resource "aws_iam_role_policy_attachment" "Group7-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.group7.name
 }
 
 # Optionally, enable Security Groups for Pods
 # Reference: https://docs.aws.amazon.com/eks/latest/userguide/security-groups-for-pods.html
-resource "aws_iam_role_policy_attachment" "example-AmazonEKSVPCResourceController" {
+resource "aws_iam_role_policy_attachment" "Group7-AmazonEKSVPCResourceController" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.group7.name
 }
+
 
 resource "aws_instance" "Group7"{
     instance_type = "m5.xlarge"
@@ -213,8 +224,9 @@ data "aws_ec2_instance_types" "ami_instance" {
     }
 }*/
 
-
+/*
 module "website_s3_bucket" {
     source = "./modules/aws-s3-static-website-bucket"
     bucket_name = "group7-terraform-hackathon"
 }
+*/
