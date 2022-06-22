@@ -38,7 +38,7 @@ resource "kubernetes_deployment" "saagie" {
 
         container { 
 
-          image = "saagie:${var.wordpress_tag}" 
+          #image = "saagie:${var.wordpress_tag}" 
 
           name  = "saagie" 
 

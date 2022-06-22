@@ -53,7 +53,7 @@ resource "aws_subnet" "public-subnet-in-us-east-2" {
 } 
 resource "aws_eks_cluster" "group7" {
   name     = "group7"
-  role_arn = aws_iam_role.group7.arn
+   role_arn = aws_iam_role.group7.arn 
 
   vpc_config {
     #name = "terraform-test-sg-group7"
@@ -94,11 +94,11 @@ resource "aws_eks_node_group" "group7" {
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
-  depends_on = [
-    aws_iam_role_policy_attachment.group7-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.group7-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.group7-AmazonEC2ContainerRegistryReadOnly,
-  ]
+  /* depends_on = [
+    aws_iam_role_policy_attachment.HackathonPolicy
+   /*  aws_iam_role_policy_attachment.group7-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.group7-AmazonEC2ContainerRegistryReadOnly, */
+  /* ] * */
 }
 /*resource "aws_iam_role" "group7" {
   name = "eks-node-group-group7"
@@ -115,7 +115,7 @@ resource "aws_eks_node_group" "group7" {
   })
 }*/
 
-  resource "aws_iam_role_policy_attachment" "group7-AmazonEKSWorkerNodePolicy" {
+ /* resource "aws_iam_role_policy_attachment" "group7-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.group7.name
 }
@@ -128,11 +128,11 @@ resource "aws_iam_role_policy_attachment" "group7-AmazonEKS_CNI_Policy" {
   resource "aws_iam_role_policy_attachment" "group7-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.group7.name
-}
+}*/
 
 
 resource "aws_iam_role" "group7" {
-  name = "eks-cluster-group7"
+  name = "HackathonPolicy"
 
   assume_role_policy = <<POLICY
 {
@@ -158,8 +158,59 @@ resource "aws_iam_role" "group7" {
 }
 POLICY
 }
+ /* assume_role_policy = <<POLICY
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListAttachedRolePolicies",
+                "iam:GetPolicyVersion",
+                "iam:ListRoleTags",
+                "iam:PutRolePermissionsBoundary",
+                "iam:ListPoliciesGrantingServiceAccess",
+                "iam:DeletePolicy",
+                "iam:CreateRole",
+                "iam:AttachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:PassRole",
+                "iam:DetachRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:ListPolicyTags",
+                "iam:CreatePolicyVersion",
+                "iam:ListRolePolicies",
+                "iam:ListPolicies",
+                "iam:GetRole",
+                "cloudshell:*",
+                "iam:GetPolicy",
+                "cloudformation:*",
+                "iam:ListRoles",
+                "iam:DeleteRole",
+                "iam:CreatePolicy",
+                "iam:ListPolicyVersions",
+                "ec2:*",
+                "iam:UpdateRole",
+                "eks:*",
+                "iam:GetRolePolicy"
+            ],
+            "Resource": "*"
+        }
+    ]
 
-resource "aws_iam_role_policy_attachment" "Group7-AmazonEKSClusterPolicy" {
+}
+POLICY
+}*/
+resource "aws_iam_role_policy_attachment" "ec2-read-only-policy-attachment" {
+    role = "${aws_iam_role.group7.name}"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"  
+ }
+
+
+
+
+/* resource "aws_iam_role_policy_attachment" "Group7-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.group7.name
 }
@@ -169,13 +220,14 @@ resource "aws_iam_role_policy_attachment" "Group7-AmazonEKSClusterPolicy" {
 resource "aws_iam_role_policy_attachment" "Group7-AmazonEKSVPCResourceController" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.group7.name
-}
+} */
 
 
 resource "aws_instance" "Group7"{
     instance_type = "m5.xlarge"
-    ami = "ami-0a6c56d1ac3564f4b"
-   # instance_type = tolist(data.aws_ec2_instance_types.ami_instance.instance_types)[0]
+    ami = "ami-045fa58af83eb0ff4"
+    availability_zone = "us-east-2a"
+    #instance_type = tolist(data.aws_ec2_instance_types.ami_instance.instance_types)[0]
     vpc_security_group_ids = [aws_security_group.instance_sg.id]
     
     tags = {
@@ -230,3 +282,41 @@ module "website_s3_bucket" {
     bucket_name = "group7-terraform-hackathon"
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+module "ec2_instance" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 3.0"
+
+  name = "Groupe7"
+
+  ami                    = "ami-ebd02392"
+  instance_type          = "m5.xlarge"
+  key_name               = "groupe7"
+  monitoring             = true
+  vpc_security_group_ids = ["sg-12345678"]
+  subnet_id              = "subnet-eddcdzz4"
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}*/

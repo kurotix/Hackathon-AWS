@@ -8,7 +8,7 @@ variable "AWS_SECRET_KEY" {
 
 variable "AWS_REGION" {
   type = string
-  default = "us-east-1"
+  default = "us-east-2a"
 }
 
 variable "AWS_AMI" {
@@ -20,8 +20,4 @@ variable "AWS_AMI" {
     default = "m5.xlarge"
 } */
 
-variable "wordpress_tag" { 
-
-  type = string 
-} 
 
